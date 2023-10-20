@@ -1,7 +1,7 @@
 #include <iostream>
 #include <ctime>
 
-// pour les nombres alÃ©atoires
+// pour les nombres aléatoires
 #include <random>
 #include <cstring> // strlen
 
@@ -78,14 +78,14 @@ void afficher_coup(char c1, char c2, char c3, char c4,
 // ======================================================================
 void message_gagne(int nb_coups)
 {
-  cout << "Bravo ! Vous avez trouvÃ© en " << nb_coups << " coups." << endl;
+  cout << "Bravo ! Vous avez trouvé en " << nb_coups << " coups." << endl;
 }
 
 // ======================================================================
 void message_perdu(char c1, char c2, char c3, char c4)
 {
   cout << "Perdu :-(" << endl;
-  cout << "La bonne combinaison Ã©tait : ";
+  cout << "La bonne combinaison était : ";
   afficher_couleurs(c1, c2, c3, c4);
   cout << endl;
 }
@@ -112,11 +112,13 @@ bool verifier(char c1, char& c2, int& score)
 }
 
 // ======================================================================
-void apparier(char c_a_tester, char& c1, char& c2, char& c3, int& score)
+void apparier(char c, char& r1, char& r2, char& r3, int& score)
 {
-    verifier(c1, c_a_tester, score);
-    verifier(c2, c_a_tester, score);
-    verifier(c3, c_a_tester, score);
+    if (!verifier(c, r1, score)) {
+        if (!verifier(c, r2, score)) {
+            verifier(c, r3, score);
+        }
+    }
 }
 
 // ======================================================================
@@ -126,19 +128,30 @@ void afficher_reponses(char c1, char c2, char c3, char c4,
 
     int scoreHashtag(0);
 
-    verifier(c1, r1, scoreHashtag);
-    verifier(c2, r2, scoreHashtag);
-    verifier(c3, r3, scoreHashtag);
-    verifier(c4, r4, scoreHashtag);
+    bool c1OK = verifier(c1, r1, scoreHashtag);
+    bool c2OK = verifier(c2, r2, scoreHashtag);
+    bool c3OK = verifier(c3, r3, scoreHashtag);
+    bool c4OK = verifier(c4, r4, scoreHashtag);
+
+    /*
+    cout << endl;
+    cout << r1 << endl;
+    cout << r2 << endl;
+    cout << r3 << endl;
+    cout << r4 << endl;
+    cout << c1 << endl;
+    cout << c2 << endl;
+    cout << c3 << endl;
+    cout << c4 << endl;*/
 
     afficher(scoreHashtag, '#');
 
     int scoreMalPlacesMaisOK(0);
 
-    apparier(c1, r2, r3, r4, scoreMalPlacesMaisOK);
-    apparier(c2, r1, r3, r4, scoreMalPlacesMaisOK);
-    apparier(c3, r1, r2, r4, scoreMalPlacesMaisOK);
-    apparier(c4, r1, r2, r3, scoreMalPlacesMaisOK);
+    if (!c1OK) apparier(c1, r2, r3, r4, scoreMalPlacesMaisOK);
+    if (!c2OK) apparier(c2, r1, r3, r4, scoreMalPlacesMaisOK);
+    if (!c3OK) apparier(c3, r1, r2, r4, scoreMalPlacesMaisOK);
+    if (!c4OK) apparier(c4, r1, r2, r3, scoreMalPlacesMaisOK);
 
     afficher(scoreMalPlacesMaisOK, '+');
 
@@ -162,6 +175,12 @@ void jouer(int coups_max = 8)
     char r2 = tirer_couleur();
     char r3 = tirer_couleur();
     char r4 = tirer_couleur();
+
+    /*
+    char r1 = '.';
+    char r2 = '.';
+    char r3 = 'M';
+    char r4 = '.';*/
 
     char c1;
     char c2;
